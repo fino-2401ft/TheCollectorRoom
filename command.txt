@@ -1,0 +1,13 @@
+g++ openglwin.cpp -o openglwin `
+-I C:\glfw-3.4.bin.WIN64\include `
+-I C:\glew-2.1.0\include `
+-L C:\glfw-3.4.bin.WIN64\lib-mingw-w64 `
+-L C:\glew-2.1.0\lib\Release\x64 `
+-lglfw3dll -lglew32 -lglu32 -lopengl32 -lgdi32; ./openglwin.exe
+
+
+-------
+Build:
+1. cd to build directory
+2. cmake -G  "MinGW Makefiles" ..
+3. cmake --build .
