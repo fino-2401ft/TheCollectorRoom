@@ -3,7 +3,7 @@
 #include <GL/gl.h>
 #include <cmath>
 
-Animal::Animal(const Vec3 &pos) : Object3D(pos, {1.0f, 0.6f, 0.6f}, {1.0f, 0.85f, 0.3f}, 0.8f), phase(0.0f) {}
+Animal::Animal(const Vec3 &pos) : Object3D(pos, {1.0f, 0.6f, 0.6f}, {1.0f, 0.85f, 0.2f}, 0.8f), phase(0.0f) {}
 
 void Animal::update(float dt)
 {

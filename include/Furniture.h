@@ -8,7 +8,9 @@ enum FurnitureType
     FT_BED,
     FT_CABINET,
     FT_FRIDGE,
-    FT_TV
+    FT_TV,
+    FT_LOW_CABINET,
+    FT_LAMP
 };
 
 class Furniture : public Object3D

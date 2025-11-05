@@ -14,6 +14,7 @@ bool keysDown[1024] = {0};
 double lastX = 400, lastY = 300;
 bool firstMouse = true;
 int collected = 0;
+bool gameWon = false;
 
 void framebuffer_size_callback(GLFWwindow *window, int w, int h)
 {
@@ -65,15 +66,11 @@ void key_callback(GLFWwindow *window, int key, int sc, int action, int mods)
             collected++;
             std::cout << "Collected: " << collected << " / 5\n";
         }
-        else
+        else if (collected >= 5 && room.isNearDoor(cam.pos, 2.0f) && !room.doorOpen)
         {
-            // check door at (0, ?, 9)
-            float dx = cam.pos.x - 0.0f;
-            float dz = cam.pos.z - 9.0f;
-            if (collected >= 5 && (dx * dx + dz * dz) < 2.0f * 2.0f)
-            {
-                std::cout << "Congratulations! You've collected all keys and opened the door!\n";
-            }
+            room.openDoor();
+            gameWon = true;
+            std::cout << "Congratulations! You've collected all keys and opened the door!\n";
         }
     }
 }
@@ -101,10 +98,13 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    float lightpos[] = {5.0f, 5.0f, -5.0f, 1.0f};
+    // Light from window (right wall, position around window area)
+    float lightpos[] = {9.0f, 3.0f, -3.5f, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
     float ambient[] = {0.3f, 0.3f, 0.35f, 1.0f};
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    float diffuse[] = {0.8f, 0.85f, 0.9f, 1.0f};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 
     room.setupScene();
 
@@ -152,9 +152,24 @@ int main()
         char buf[64];
         sprintf(buf, "Collected: %d / 5", collected);
         float col[3] = {1.0f, 1.0f, 1.0f};
-        drawText2D(buf, 10.0f, 20.0f, 1.0f, col, w, h);
+        drawText2D(buf, 10.0f, (float)h - 30.0f, 1.0f, col, w, h);
+        
+        // Show interaction prompts
         if (room.getNearbyItem(cam.pos, 2.0f))
-            drawText2D("Press F to collect", w / 2 - 60, h / 2, 1.0f, col, w, h);
+        {
+            drawText2D("Press F to collect", w / 2.0f - 80.0f, h / 2.0f, 1.2f, col, w, h);
+        }
+        else if (collected >= 5 && room.isNearDoor(cam.pos, 2.0f) && !room.doorOpen)
+        {
+            drawText2D("Press F to open door", w / 2.0f - 90.0f, h / 2.0f, 1.2f, col, w, h);
+        }
+        
+        // Victory message
+        if (gameWon)
+        {
+            float winCol[3] = {1.0f, 1.0f, 0.0f};
+            drawText2D("Congratulations! You've collected all items!", w / 2.0f - 200.0f, h / 2.0f + 50.0f, 1.5f, winCol, w, h);
+        }
         glPopMatrix();
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
